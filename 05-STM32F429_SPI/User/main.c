@@ -20,6 +20,7 @@ int main(void) {
 	/* Initialize system */
 	SystemInit();
 
+	// 初始化 SPI，選擇第一組 SPI 和第一組 SPI 的 PinsPack
 	/* Initialize SPI */
 	/* SCK = PA5, MOSI = PA7, MISO = PA6 */
 	TM_SPI_Init(SPI1, TM_SPI_PinsPack_1);

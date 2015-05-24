@@ -27,7 +27,16 @@ void TM_SPI4_INT_InitPins(TM_SPI_PinsPack_t pinspack);
 void TM_SPI5_INT_InitPins(TM_SPI_PinsPack_t pinspack);
 void TM_SPI6_INT_InitPins(TM_SPI_PinsPack_t pinspack);
 
+/*
+ *	SPI 初始化的 Function
+ */
 void TM_SPI_Init(SPI_TypeDef* SPIx, TM_SPI_PinsPack_t pinspack) {
+	/*
+	 *	可以看到這邊，要使用每一組 SPI 都經過了包裝，各自呼叫了 TM_SPIx_Init，因此在指定要使用哪一個 SPI 時，
+	 *	記得要去 defines.h 先進行 preprocessor 做定義。
+	 *
+	 *	可以發現到，其實類似的 Init Function 有好幾個，這一個 TM_SPI_Init 則是所有的參數都使用預設值。
+	 */
 	/* Init with default settings */
 #ifdef SPI1
 	if (SPIx == SPI1) {
@@ -61,6 +70,9 @@ void TM_SPI_Init(SPI_TypeDef* SPIx, TM_SPI_PinsPack_t pinspack) {
 #endif
 }
 
+/*
+ *	和 TM_SPI_Init 一樣，但多了可以自訂 SPI Mode 的參數(取代預設的 SPI Mode)。
+ */
 void TM_SPI_InitWithMode(SPI_TypeDef* SPIx, TM_SPI_PinsPack_t pinspack, TM_SPI_Mode_t SPI_Mode) {
 	/* Init with custom mode, 0, 1, 2, 3 */
 #ifdef SPI1
@@ -95,6 +107,9 @@ void TM_SPI_InitWithMode(SPI_TypeDef* SPIx, TM_SPI_PinsPack_t pinspack, TM_SPI_M
 #endif
 }
 
+/*
+ *	和 TM_SPI_Init 相同，但主要是變成所有的參數都可以進行定義(全部可以取代預設值)。
+ */
 void TM_SPI_InitFull(
 	SPI_TypeDef* SPIx, 
 	TM_SPI_PinsPack_t pinspack,
