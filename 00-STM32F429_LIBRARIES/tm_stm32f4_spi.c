@@ -1,4 +1,4 @@
-/**	
+﻿/**	
  * |----------------------------------------------------------------------
  * | Copyright (C) Tilen Majerle, 2014
  * | 
@@ -322,16 +322,31 @@ void TM_SPI_ReadMulti16(SPI_TypeDef* SPIx, uint16_t* dataIn, uint16_t dummy, uin
 static void TM_SPIx_Init(SPI_TypeDef* SPIx, TM_SPI_PinsPack_t pinspack, TM_SPI_Mode_t SPI_Mode, uint16_t SPI_BaudRatePrescaler, uint16_t SPI_MasterSlave, uint16_t SPI_FirstBit) {
 	SPI_InitTypeDef SPI_InitStruct;
 
+	// 這一個 Function 直接呼叫到 STM32 所提供的 Function，此 Function 的功能在於，把 SPI 的結構，填上預設值。
 	/* Set default settings */
 	SPI_StructInit(&SPI_InitStruct);
+
+	// 接下來的各個 Region，分別對於各自的 SPI 做個別的設定。
+		// 在這邊先只註解第一個 (SPI 1)
 #ifdef SPI1	
 	if (SPIx == SPI1) {
+
+		/* 
+		 * 把 APB2 Enable 起來，因為 SPI 1 要使用 APB2 這一個 Bus
+		 * 我們注意到，SPI 1, 4, 5, 6 皆使用 APB2 這一個 Bus
+		 * SPI 2, 3 則是使用 APB1 這一個 Bus
+		 *
+		 * 因此藉由 RCC->APB2ENR 來 Enable Clock，並使用 API 給予的 Define。
+		 * 
+		 */
 		/* Enable SPI clock */
 		RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
-		
+
+		// 這邊進行 TM Library 的 Pin 的設定
 		/* Init pins */
 		TM_SPI1_INT_InitPins(pinspack);
-		
+
+		// 設定 SPI 1 DataSize，這邊比照 STM32 預設值
 		/* Set options */
 		SPI_InitStruct.SPI_DataSize = TM_SPI1_DATASIZE;
 	}
@@ -398,13 +413,16 @@ static void TM_SPIx_Init(SPI_TypeDef* SPIx, TM_SPI_PinsPack_t pinspack, TM_SPI_M
 	}
 #endif
 
+	// 這邊再重新給予一次 SPI 各個的參數
 	/* Fill SPI settings */
 	SPI_InitStruct.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler;
 	SPI_InitStruct.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
 	SPI_InitStruct.SPI_FirstBit = SPI_FirstBit;
 	SPI_InitStruct.SPI_Mode = SPI_MasterSlave;
 	SPI_InitStruct.SPI_NSS = SPI_NSS_Soft;
-	
+
+	// 這邊給予不同的 SPI Mode，然後設定不一樣的 CPOL, CPHA
+	// 看起來 STM 是靠 SPI_CPOL, SPI_CPHA 來決定 Mode (有點像是設定哪一種觸發方式、高低相位等)
 	/* SPI mode */
 	if (SPI_Mode == TM_SPI_Mode_0) {
 		SPI_InitStruct.SPI_CPOL = SPI_CPOL_Low;
