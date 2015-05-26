@@ -1,4 +1,4 @@
-/**
+﻿/**
   ******************************************************************************
   * @file    stm32f4xx_spi.c
   * @author  MCD Application Team
@@ -799,6 +799,7 @@ void I2S_FullDuplexConfig(SPI_TypeDef* I2Sxext, I2S_InitTypeDef* I2S_InitStruct)
   * @{
   */
 
+// 這邊和 TM Library 使用的是一樣的方式。
 /**
   * @brief  Returns the most recent received data by the SPIx/I2Sx peripheral. 
   * @param  SPIx: To select the SPIx/I2Sx peripheral, where x can be: 1, 2, 3, 4, 5 or 6 
@@ -814,6 +815,7 @@ uint16_t SPI_I2S_ReceiveData(SPI_TypeDef* SPIx)
   return SPIx->DR;
 }
 
+// 這邊和 TM Library 使用的是一樣的方式。
 /**
   * @brief  Transmits a Data through the SPIx/I2Sx peripheral.
   * @param  SPIx: To select the SPIx/I2Sx peripheral, where x can be: 1, 2, 3, 4, 5 or 6 

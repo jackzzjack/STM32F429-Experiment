@@ -28,6 +28,21 @@ void TM_SPI5_INT_InitPins(TM_SPI_PinsPack_t pinspack);
 void TM_SPI6_INT_InitPins(TM_SPI_PinsPack_t pinspack);
 
 /*
+ * FlowChart:
+ * 			TM_SPI_Init -------------
+ * 			(TM_SPI_InitWithMode)	|
+ * 			(TM_SPI_InitFull)		|
+ * 									|
+ * 									TM_SPIx_Init --------
+ * 														|
+ * 														SPI_StructInit
+ * 														TM_SPI1_INT_InitPins --------
+ * 																					|
+ * 																					TM_GPIO_InitAlternate
+ * 														SPI_Init
+ */
+ 
+/*
  *	SPI 初始化的 Function
  */
 void TM_SPI_Init(SPI_TypeDef* SPIx, TM_SPI_PinsPack_t pinspack) {
@@ -198,6 +213,12 @@ uint16_t TM_SPI_GetPrescalerFromMaxFrequency(SPI_TypeDef* SPIx, uint32_t MAX_SPI
 	return SPI_BaudRatePrescaler_256;
 }
 
+/*
+ * 此 Function 用來傳送 8 bit 資料
+ *
+ * 會先檢查 SPI 的狀態，在進行傳送，最後再檢查狀態。
+ * 但其實都是去檢查暫存器，值丟到暫存器，再檢查暫存器。
+ */
 uint8_t TM_SPI_Send(SPI_TypeDef* SPIx, uint8_t data) {
 	/* Wait for previous transmissions to complete if DMA TX enabled for SPI */
 	SPI_WAIT(SPIx);
@@ -439,15 +460,20 @@ static void TM_SPIx_Init(SPI_TypeDef* SPIx, TM_SPI_PinsPack_t pinspack, TM_SPI_M
 	}
 	
 	/* Disable first */
-	SPIx->CR1 &= ~SPI_CR1_SPE;
+	SPIx->CR1 &= ~SPI_CR1_SPE;					// 先至 SPI Register 直接進行 Disable
 	
 	/* Init SPI */
-	SPI_Init(SPIx, &SPI_InitStruct);
+	SPI_Init(SPIx, &SPI_InitStruct);			// 直接下至 STM32 所提供的 SPI Init Function
 	
 	/* Enable SPI */
-	SPIx->CR1 |= SPI_CR1_SPE;
+	SPIx->CR1 |= SPI_CR1_SPE;					// Enable SPI Register
 }
 
+/*
+ * 這幾個 Region 用來設定 SPI 所需要的 Pin 腳
+ * 可以看到 SPI 搭配各自的 PinPack, 可以參考這邊 https://sites.google.com/site/johnkneenmicrocontrollers/input_output/stm32f429_io
+ * PinPack 會去呼叫 GPIO AF 的部分
+ */
 /* Private functions */
 #ifdef SPI1
 void TM_SPI1_INT_InitPins(TM_SPI_PinsPack_t pinspack) {

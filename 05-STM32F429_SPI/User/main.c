@@ -20,11 +20,12 @@ int main(void) {
 	/* Initialize system */
 	SystemInit();
 
-	// 初始化 SPI，選擇第一組 SPI 和第一組 SPI 的 PinsPack
+	// 初始化 SPI，選擇第一組 SPI 和第一組 SPI 的 PinsPack。PinsPack 可以參考這邊 https://sites.google.com/site/johnkneenmicrocontrollers/input_output/stm32f429_io
 	/* Initialize SPI */
 	/* SCK = PA5, MOSI = PA7, MISO = PA6 */
 	TM_SPI_Init(SPI1, TM_SPI_PinsPack_1);
 	
+	// 傳送 0x15 這個 ASCII 出去
 	/* Send 0x15 over SPI1 */
 	TM_SPI_Send(SPI1, 0x15);
 	
