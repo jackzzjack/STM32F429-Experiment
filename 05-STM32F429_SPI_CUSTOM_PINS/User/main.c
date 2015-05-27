@@ -20,6 +20,7 @@ int main(void) {
 	/* Initialize system */
 	SystemInit();
 
+	// PinsPack 設定為 自訂，注意不要忘記要寫 callback function
 	/* Initialize SPI with custom pins */
 	TM_SPI_Init(SPI1, TM_SPI_PinsPack_Custom);
 	
@@ -31,6 +32,10 @@ int main(void) {
     }
 }
 
+/* 多了這一個 callback，這邊的目的在於，可以針對不同的 SPI 自己混搭不同組的 GPIO
+ * 例如這邊，原本是 PA5 ~ PA7，其中 PA5 和 PB3 一樣都是 SPI1_SCK，因此可以互換。
+ * 		Reference: https://sites.google.com/site/johnkneenmicrocontrollers/input_output/stm32f429_io
+ */
 /* Custom pins callback for SPI */
 void TM_SPI_InitCustomPinsCallback(SPI_TypeDef* SPIx) {
 	/* Check for SPI1 */
